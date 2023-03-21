@@ -37,6 +37,8 @@ const handleInput = event => {
 formEl.addEventListener('input', throttle(handleInput, 500));
 
 const handleCreatePromises = event => {
+  submiteBtnEl.disabled = true;
+
   event.preventDefault();
   const savedMessage = localStorage.getItem(STORAGE_KEY);
 
@@ -75,16 +77,17 @@ const handleCreatePromises = event => {
     }
 
     createPromise(index + 1, delay)
-      .then(({ position, delay }) => {
-        Notiflix.Notify.info(`✅ Fulfilled promise ${position} in ${delay}ms`, {
-          timeout: 6000,
-        });
-      })
-      .catch(({ position, delay }) => {
-        Notiflix.Notify.info(`❌ Rejected promise ${position} in ${delay}ms`, {
-          timeout: 6000,
-        });
-      });
+      .then(({ position, delay }) =>
+        Notiflix.Notify.info(`✅ Fulfilled promise ${position} in ${delay}ms`)
+      )
+      .catch(({ position, delay }) =>
+        Notiflix.Notify.info(`❌ Rejected promise ${position} in ${delay}ms`)
+      );
+    if (index === amount - 1) {
+      setTimeout(() => {
+        submiteBtnEl.disabled = false;
+      }, step * amount);
+    }
   }
 };
 submiteBtnEl.addEventListener('click', handleCreatePromises);
